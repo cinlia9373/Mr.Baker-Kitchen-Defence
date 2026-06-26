@@ -1,108 +1,85 @@
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.event.*;
+import javax.swing.SwingUtilities;
 
-import javax.imageio.ImageIO;
+public class InputHandler implements KeyListener, MouseListener, MouseMotionListener {
+    
+    private boolean[] keys = new boolean[256];
+    private boolean[] mouseButtons = new boolean[4]; 
+    private int mouseX, mouseY;
 
-/**
- * Represents an arrow
- * Contains the damage, speed, image of arrow, x and y coordinates of arrow, column and row of the arrow
- * @author Cindy Liang
- */
+    // Keyboard questions we can ask
+    public boolean isKeyDown(int keyCode) {
+        if (keyCode >= 0 && keyCode < keys.length) return keys[keyCode];
+        return false;
+    }
 
-public class Arrow {
-    private int damage;
-    private double speed;
-    private BufferedImage arrowImage;
+    // Questions we can ask about the mouse
+    public int getMouseX() { 
+        return mouseX; 
+    }
+    
+    public int getMouseY() { 
+        return mouseY; 
+    }
 
-    //current position
-    private double x;
-    private int y;
-    private int col;
-    private int row;
+    public boolean isLeftMouseDown() { 
+        return mouseButtons[1]; 
+    }
+    
+    public boolean isMiddleMouseDown() { 
+        return mouseButtons[2]; 
+    }
+    public boolean isRightMouseDown() { 
+        return mouseButtons[3]; 
+    }
 
-    /**
-     * Creates an arrow
-     * @param startRow  row that arrow starts at
-     * @param startCol column that arrow starts at
-     */
-    public Arrow(int startRow, int startCol){
-        this.damage = 15;
-        this.speed = 1.5;
-
-        try{
-            this.arrowImage = ImageIO.read(new File("images/PretzelArrow.png"));
-        } catch(Exception e){
-            e.printStackTrace();
+    // Get the mouse button status
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int b = e.getButton();
+        if (b > 0 && b < mouseButtons.length) {
+            mouseButtons[b] = true;
         }
-
-        //initial position
-        this.x = 125 + (startCol*65); //maybe add the 25 more pixels so it is a little backed up on the tile
-        this.y = 50 + (startRow*65);
-        this.col = startCol;
-        this.row = startRow;
     }
 
-    /**
-     * Get the attack of the arrow
-     * @return arrow's attack
-     */
-    public int getDamage(){
-        return this.damage;
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        int b = e.getButton();
+        if (b > 0 && b < mouseButtons.length) {
+            mouseButtons[b] = false;
+        }
     }
 
-    /**
-     * Get the speed of the arrow
-     * @return arrow's speed
-     */
-    public double getSpeed(){
-        return this.speed;
+    // Get the mouse position
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
     }
 
-    /**
-     * The arrow moves towards the left
-     */
-    public void moveArrow(){
-        this.x-=this.speed; //arrow is moving towards the left
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
     }
 
-    /**
-     * get the current x coordinate of the arrow
-     * @return x coordinate of the arrow
-     */
-    public double x(){
-        return this.x;
+
+    // Keyboard button status
+    public void keyPressed(KeyEvent e) { 
+        if (e.getKeyCode() < 256){
+            keys[e.getKeyCode()] = true;     
+        } 
+    }
+    public void keyReleased(KeyEvent e) { 
+        if (e.getKeyCode() < 256){
+            keys[e.getKeyCode()] = false; 
+        }
+        
     }
 
-    /**
-     * get the current y coordinate of the arrow
-     * @return y coordinate of the arrow
-     */
-    public int y(){
-        return this.y;
-    }
-
-    /**
-     * get the row the arrow is flying in
-     * @return row arrow is in
-     */
-    public int getRow(){
-        return this.row;
-    }
-
-    /**
-     * get current column the arrow is flying in
-     * @return column arrow is in
-     */
-    public int getCol(){
-        return this.col;
-    }
-
-    /**
-     * get the image of the arrow
-     * @return image of the arrow
-     */
-    public BufferedImage getImage(){
-        return this.arrowImage;
-    }
-
+    // Unused mandatory methods
+    public void keyTyped(KeyEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 }
